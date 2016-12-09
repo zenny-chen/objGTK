@@ -3,6 +3,7 @@
 #import "GTKApplicationWindow.h"
 #import "GTKFixed.h"
 #import "GTKButton.h"
+#import "GTKLabel.h"
 
 
 @interface AppDelegate : GTKObject<GTKApplicationDelegate, GTKWindowDelegate>
@@ -11,6 +12,7 @@
 
     GTKApplicationWindow *mWindow;
     GTKFixed *mFixed;
+    GTKLabel *mLabel;
 }
 
 @end
@@ -34,7 +36,7 @@
     mWindow = [[GTKApplicationWindow alloc] initWithApp:application];
     mWindow.title = "My Test";
     mWindow.defaultSize = (struct GTKSize){640, 480};
-    [mWindow setInitPosition:GTK_WIN_POS_CENTER];
+    mWindow.initPosition = GTK_WIN_POS_CENTER;
     mWindow.borderWidth = 8;
     mWindow.delegate = self;
 
@@ -46,11 +48,9 @@
 
     GTKButton *button = [[GTKButton alloc] initWithLabel:"Button"];
     [button addClickEventWithTarget:self selector:@selector(buttonClicked:)];
-
+    button.size = (struct GTKSize){90, 30};
     [mFixed putWidget:button atX:20 atY:40];
     [button release];
-
-    button.size = (struct GTKSize){90, 30};
 
     NSLog(@"Does mFixed contains a button? %d", [mFixed containsWidget:button]);
 
@@ -62,6 +62,16 @@
 - (void)buttonClicked:(GTKButton*)button
 {
     puts("Button clicked!!");
+    if(mLabel == nil)
+    {
+        mLabel = [[GTKLabel alloc] initWithText:"Hello, world!\n你好，世界！"];
+        mLabel.singleLineMode = NO;
+        mLabel.lines = 2;
+        [mFixed putWidget:mLabel atX:130 atY:40];
+        [mLabel release];
+
+        [mWindow showAll];
+    }
 }
 
 - (void)windowWillClose:(GTKWindow* _Nonnull)window
